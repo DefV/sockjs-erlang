@@ -374,9 +374,12 @@ handle_info(_Info, State) ->
     % stop, {odd_info, Info}, State}.
     {noreply, State}.
 
-terminate(_, State = #session{id = SessionId}) ->
+terminate(_, State = #session{id = SessionId, ready_state = ReadyState}) ->
     ets:delete(?ETS, SessionId),
-    _ = emit(closed, State),
+    _ = case ReadyState of
+      connecting -> ok;
+      _ -> emit(closed, State)
+    end,
     ok.
 
 code_change(_OldVsn, State, _Extra) ->
