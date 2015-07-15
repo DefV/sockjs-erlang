@@ -370,9 +370,9 @@ handle_info(session_timeout, State = #session{response_pid = undefined}) ->
 handle_info(heartbeat_triggered, State = #session{response_pid = RPid}) when RPid =/= undefined ->
     RPid ! go,
     {noreply, State#session{heartbeat_tref = triggered}};
-handle_info(_Info, State) ->
-    % stop, {odd_info, Info}, State}.
-    {noreply, State}.
+handle_info(Info, State) ->
+    State1 = emit({info, Info}, State),
+    {noreply, State1}.
 
 terminate(_, State = #session{id = SessionId, ready_state = ReadyState}) ->
     ets:delete(?ETS, SessionId),
