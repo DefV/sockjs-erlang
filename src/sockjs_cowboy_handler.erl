@@ -31,7 +31,7 @@ init(Req, Service) ->
             {cowboy_websocket, Req, {RawWebSocket, SessionPid}};
         {false, _Reason} ->
             {cowboy, Req1} = sockjs_handler:handle_req(Service, {cowboy, Req}),
-            {ok, Req1, Service}.
+            {ok, Req1, Service}
     end.
 
 terminate(_Reason, _Req, _Service) -> ok.
