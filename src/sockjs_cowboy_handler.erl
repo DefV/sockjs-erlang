@@ -58,6 +58,10 @@ websocket_handle(
         ok -> {[], S};
         shutdown -> {stop, S}
     end;
+
+websocket_handle({pong, _Reply}, S) ->
+    {[], S};
+
 websocket_handle(_Unknown, S) ->
     {stop, S}.
 
@@ -68,6 +72,9 @@ websocket_info(
     case sockjs_ws_handler:reply(RawWebsocket, SessionPid) of
         wait ->
             {[], S};
+        {ok, <<"h">> = Data} ->
+            self() ! go,
+            {reply, [{text, Data}, {ping, Data}], S};
         {ok, Data} ->
             self() ! go,
             {reply, {text, Data}, S};
